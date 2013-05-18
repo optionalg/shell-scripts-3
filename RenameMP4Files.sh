@@ -37,11 +37,15 @@ for FILE in $@; do
 			sed "s|^ ||g"`
 		EP_NUMBER=`$AP_BINARY $FILE -t | grep trkn | cut -d : -f 2- | \
 			sed "s|^ ||g"`
-		
-		[ "$EP_NUMBER" -lt 10 ] && EP_NUMBER="0${EP_NUMBER}"
 
-		# move files
-		NEW_FILENAME="${DNAME}/${EP_NUMBER} ${EP_NAME}.mp4"
-		mv "$FILE" "$NEW_FILENAME"
+    # make sure to rename the file only if metadata infos are present
+    # (otherwise we end up with '0.mp4' files)
+    [ "$EP_NUMBER" -ne "" ] && [ "$EP_NAME" -ne "" ] && {
+      [ "$EP_NUMBER" -lt 10 ] && EP_NUMBER="0${EP_NUMBER}"
+
+      # move files
+      NEW_FILENAME="${DNAME}/${EP_NUMBER} ${EP_NAME}.mp4"
+      mv "$FILE" "$NEW_FILENAME"
+    }
 	}
 done
